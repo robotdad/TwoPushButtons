@@ -103,20 +103,33 @@ namespace PushButton
             yespushButton.Dispose();
         }
 
-        private void FlipLED(GpioPin pb, GpioPin pin, SolidColorBrush brush, string msg)
+        private void FlipLED()
         {
-            pushButtonValue = pb.Read();
+            pushButtonValue = nopushButton.Read();
             if (pushButtonValue == GpioPinValue.Low)
             {
-                LED.Fill = brush;
-                GpioStatus.Text = msg;
-                pin.Write(GpioPinValue.Low);
+                LED.Fill = redBrush;
+                GpioStatus.Text = "Boo!";
+                nopin.Write(GpioPinValue.Low);
+                return;
+            }
+            else if (pushButtonValue == GpioPinValue.High)
+            {
+                nopin.Write(GpioPinValue.High);
+            }
+            pushButtonValue = yespushButton.Read();
+            if (pushButtonValue == GpioPinValue.Low)
+            {
+                LED.Fill = greenBrush;
+                GpioStatus.Text = "Yay!";
+                yespin.Write(GpioPinValue.Low);
+                return;
             }
             else if (pushButtonValue == GpioPinValue.High)
             {
                 LED.Fill = grayBrush;
                 GpioStatus.Text = "I'm waiting...";
-                pin.Write(GpioPinValue.High);
+                yespin.Write(GpioPinValue.High);
             }
         }
 
@@ -124,8 +137,7 @@ namespace PushButton
 
        private void Timer_Tick(object sender, object e)
         {
-            FlipLED(nopushButton, nopin, redBrush, "boo!");
-            FlipLED(yespushButton, yespin, greenBrush, "yay!");
+            FlipLED();
         }
 
        
