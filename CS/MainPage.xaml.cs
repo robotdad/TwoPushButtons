@@ -23,17 +23,20 @@
 */
 
 using System;
+using System.Collections.Generic;
 using Windows.Devices.Gpio;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
+using ConnectTheDotsIoT;
 
 namespace TwoPushButtons
 {
     public sealed partial class MainPage : Page
     {
         private GpioPinValue pushButtonValue;
+        ConnectTheDotsHelper ctdHelper;
+
         public MainPage()
         {
             InitializeComponent();
@@ -46,6 +49,19 @@ namespace TwoPushButtons
             Unloaded += MainPage_Unloaded;
 
             InitGPIO();
+
+            List<ConnectTheDotsSensor> sensors = new List<ConnectTheDotsSensor> {
+                new ConnectTheDotsSensor("AE48969E-DA04-4BF5-AADF-2F850F81BFA3", "Vote", "1 yes, 2 no"),
+            };
+
+            ctdHelper = new ConnectTheDotsHelper(serviceBusNamespace: "your-ns",
+                eventHubName: "ehdevices",
+                keyName: "D1",
+                key: "...=",
+                displayName: "THEPi",
+                organization: "Whips",
+                location: "Kirkland",
+                sensorList: sensors);
         }
 
         private void InitGPIO()
@@ -105,12 +121,15 @@ namespace TwoPushButtons
 
         private void FlipLED()
         {
+            ConnectTheDotsSensor sensor = ctdHelper.sensors.Find(item => item.measurename == "Vote");
             pushButtonValue = nopushButton.Read();
             if (pushButtonValue == GpioPinValue.Low)
             {
                 LED.Fill = redBrush;
                 GpioStatus.Text = "Boo!";
                 nopin.Write(GpioPinValue.Low);
+                sensor.value = 2;
+                ctdHelper.SendSensorData(sensor);
                 return;
             }
             else if (pushButtonValue == GpioPinValue.High)
@@ -123,6 +142,8 @@ namespace TwoPushButtons
                 LED.Fill = greenBrush;
                 GpioStatus.Text = "Yay!";
                 yespin.Write(GpioPinValue.Low);
+                sensor.value = 1;
+                ctdHelper.SendSensorData(sensor);
                 return;
             }
             else if (pushButtonValue == GpioPinValue.High)
