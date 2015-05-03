@@ -10,10 +10,10 @@ GPIO.setup(27, GPIO.IN)
 GPIO.setup(22, GPIO.IN)
 
 try:
-    while True:
+	while True:
 
 	    # led button 1 is pressed
-        if ( GPIO.input(27) == False ):
+		if ( GPIO.input(27) == False ):
 			GPIO.output(5, GPIO.LOW)
 		else
 			GPIO.output(5, GPIO.HIGH)
@@ -24,7 +24,7 @@ try:
 			GPIO.output(6, GPIO.HIGH)
 
 except KeyboardInterrupt:  
-    GPIO.cleanup()       # clean up GPIO on CTRL+C exit  
+	GPIO.cleanup()       # clean up GPIO on CTRL+C exit  
 
 GPIO.cleanup()      
 
