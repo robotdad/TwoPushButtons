@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 
-namespace PushButton
+namespace TwoPushButtons
 {
     public sealed partial class MainPage : Page
     {
